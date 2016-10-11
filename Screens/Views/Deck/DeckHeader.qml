@@ -43,6 +43,8 @@ Item {
 	AppProperty { id: headerPropertyLoopActive;   path: "app.traktor.decks." + (deck_Id+1) + ".loop.active"; }
 	AppProperty { id: headerPropertyLoopSize;     path: "app.traktor.decks." + (deck_Id+1) + ".loop.size"; }
 
+  AppProperty { id: propComment;        path: "app.traktor.decks." + (deckId+1) + ".content.comment" }
+
 	readonly property int speed: 40  // Transition speed
 
 	readonly property double  cuePos:    (propNextCuePoint.value >= 0) ? propNextCuePoint.value : propTrackLength.value*1000
@@ -539,52 +541,61 @@ Item {
 		}
 	}
 
-	// ####################################
-	// ### ADD SYNC STATUS & SYNCED BPM ### - OK
-	// ####################################
+	// ###################
+  // ### ADD COMMENT ### - OK
+  // ###################
 
-	Rectangle {
-    	id:						syncstatus_backgnd
-    	width:  				55
-    	height: 				14
-    	anchors.left: 			vertical_seperator_left.right
-    	anchors.leftMargin: 	1
-    	anchors.top:       		top_line.bottom
-    	anchors.topMargin: 		1
-		
-		function mstrSyncRectColor() {
-			if ( isInSync ) { return colors.rgba (0, 220, 0, 128); }
-			if ( isMaster ) { return colors.rgba (255, 128, 0, 120); }
-			if ( isLoaded ) { return colors.rgba (72, 72, 72, 255); }
-		}
-		color:     				headerState == "small" ? colors.rgba (255, 255, 255, 16) : mstrSyncRectColor()
-		visible:				isLoaded
+  Rectangle {
+      id:           syncstatus_backgnd
+      width:          55
+      height:         14
+      anchors.left:       vertical_seperator_left.right
+      anchors.leftMargin:   1
+      anchors.top:          top_line.bottom
+      anchors.topMargin:    1
+      color: colors.rgba (255, 255, 255, 16)
+      visible:        isLoaded
+    
+    Text {
+      function sizeCalc(comment)
+      {
+        if(comment.length>8)
+          return 10;
+        else if(comment.length>7)
+          return 12;
+        else
+          return 14;
+      }
 
-		Text {
-			id: 					syncstatus_text
+      function marginCalc(comment)
+      {
+        if(comment.length>8)
+          return 0;
+        else if(comment.length>7)
+          return -1;
+        else
+          return -2;
+      }
 
-			function mstrSyncText() {
-				if ( isMaster ) { return "MSTR"; }
-				if ( isInSync ) { return "SYNC"; }
-				if ( !isMaster && !isInSync ) { return "FREE"; }
-			}
-			text: 					mstrSyncText()
-
-			function mstrSyncTextColor() {
-				if ( isInSync ) { return colors.rgba (0, 0, 0, 232); }
-//				if ( isInSync ) { return colors.rgba (255, 255, 255, 175); }
-				if ( isMaster ) { return colors.rgba (255, 255, 255, 175); }
-				if ( !isMaster && !isInSync ) { return colors.rgba (0, 0, 0, 255); }
-			}
-			color:     				headerState == "small" ? colors.rgba (255, 255, 255, 48) : mstrSyncTextColor()
-
-			font.pixelSize:     	fonts.scale(14)
-			anchors.horizontalCenter: 	parent.horizontalCenter
-			anchors.top:    		parent.top
-			anchors.topMargin:  	-2
-			visible:				isLoaded
-		}
-	}
+      function trimmer(comment)
+      {
+        if(comment.length>11)
+          return comment.substring(0,11).replace(/ /g,'');
+        else if(comment.length>10)
+          return comment.replace(/ /g,'');
+        else
+          return comment;
+      }
+      id:           syncstatus_text
+      color:            headerState == "small" ? colors.rgba (255, 255, 255, 48) : colors.rgba (255, 255, 255, 232)
+      font.pixelSize:       fonts.scale(sizeCalc(propComment.value))
+      anchors.horizontalCenter:   parent.horizontalCenter
+      anchors.top:        parent.top
+      anchors.topMargin:    marginCalc(propComment.value)
+      text: trimmer(propComment.value)
+      visible:        isLoaded
+    }
+  }
 
 
 	// ####################################################
