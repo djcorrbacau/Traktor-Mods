@@ -37,7 +37,7 @@ Item {
 			anchors.top: 			parent.top
 			anchors.topMargin: 		2
 			anchors.leftMargin: 	2
-			width: 					250
+			width: 					200
 			visible: 				(model.dataType == BrowserDataType.Track)
 
 		  //! Dummy text to measure maximum text lenght dynamically and adjust icons behind it.
@@ -50,7 +50,7 @@ Item {
 
 			Text {
 				id: 				trackName_text
-				width: 				(textLengthDummy.width) > 250 ? 245 : textLengthDummy.width
+				width: 				(textLengthDummy.width) > 200 ? 195 : textLengthDummy.width
 				elide: 				Text.ElideRight
 				text: 				textLengthDummy.text
 				font.pixelSize: 	fonts.scale(12)
@@ -87,10 +87,44 @@ Item {
 			anchors.left: 			(model.dataType == BrowserDataType.Track) ? trackName_bckgnd.right : folderName_text.right
 			anchors.top: 			parent.top
 			anchors.topMargin: 		2
-			width: 					205 - (loadedInDecks_bckgnd.width != 1 ? loadedInDecks_bckgnd.width + 2 : 0)
+			width: 					165
 			color: 					isCurrentItem == false ? ((model.prevPlayed && !model.prelisten) ? colors.rgba (255, 255, 255, 32) : colors.rgba (255, 255, 255, 64)) : ((model.prevPlayed && !model.prelisten) ? colors.rgba (255, 255, 255, 32) : colors.rgba (255, 255, 255, 232))
 			clip: 					true
 			text: 					(model.dataType == BrowserDataType.Track) ? model.artistName: ""
+			font.pixelSize: 		fonts.scale(12)
+			elide: 					Text.ElideRight
+		}  
+
+		// ###########
+    	// ### BPM ###
+    	// ###########
+
+		Text {
+			id: 					bpmField
+			anchors.left: 			(model.dataType == BrowserDataType.Track) ? artistNameField.right : folderName_text.right
+			anchors.top: 			parent.top
+			anchors.topMargin: 		2
+			width: 					30
+			color: 					isCurrentItem == false ? ((model.prevPlayed && !model.prelisten) ? colors.rgba (255, 255, 255, 32) : colors.rgba (255, 255, 255, 64)) : ((model.prevPlayed && !model.prelisten) ? colors.rgba (255, 255, 255, 32) : colors.rgba (255, 255, 255, 232))
+			clip: 					true
+			text: 					(model.dataType == BrowserDataType.Track) ? model.bpm.toFixed(0): ""
+			font.pixelSize: 		fonts.scale(12)
+			elide: 					Text.ElideRight
+		}  
+
+		// ###########
+    	// ### KEY ###
+    	// ###########
+
+		Text {
+			id: 					keyField
+			anchors.left: 			(model.dataType == BrowserDataType.Track) ? bpmField.right : folderName_text.right
+			anchors.top: 			parent.top
+			anchors.topMargin: 		2
+			width: 					30
+			color: 					isCurrentItem == false ? ((model.prevPlayed && !model.prelisten) ? colors.rgba (255, 255, 255, 32) : colors.rgba (255, 255, 255, 64)) : ((model.prevPlayed && !model.prelisten) ? colors.rgba (255, 255, 255, 32) : colors.rgba (255, 255, 255, 232))
+			clip: 					true
+			text: 					(model.dataType == BrowserDataType.Track) ? (model.key.length == 2? "0" + model.key : model.key): ""
 			font.pixelSize: 		fonts.scale(12)
 			elide: 					Text.ElideRight
 		}  
