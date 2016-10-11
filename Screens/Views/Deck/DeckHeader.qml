@@ -831,7 +831,7 @@ Item {
 	// Set the beat length (beatLength : 4-8-16 beats) (default : 4).
 	// Use Original Track BPM for calculations (propTrackBpm).
 
-	readonly property int phraseLength: 8
+	readonly property int phraseLength: 4
 	readonly property int beatLength: 4
 
 	Rectangle {
