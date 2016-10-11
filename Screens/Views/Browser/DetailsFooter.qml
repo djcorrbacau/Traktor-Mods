@@ -56,7 +56,7 @@ Item {
 		if (inputKey == "11A" || 	inputKey == "11A" || 	inputKey ==  "4m" || 	inputKey ==  "Gbm" || 	inputKey ==  "F#m") 	{	return "11A"; }
 		if (inputKey == "12A" || 	inputKey == "12A" || 	inputKey ==  "5m" || 	inputKey ==  "Dbm" || 	inputKey ==  "C#m")		{	return "12A"; }
 
-		// Mayor Keys
+		// Major Keys
 		
 		//  CAMELOT WITH 0			CAMELOT					OPEN KEY	 			MUSICAL KEY				MUSICAL KEY SHARP			DISPLAY VALUE
 		if (inputKey == "01B" || 	inputKey ==  "1B" || 	inputKey ==  "6d" || 	inputKey ==  "B"   || 	inputKey ==  "B"  ) 	{	return "01B"; }
@@ -107,9 +107,21 @@ Item {
 	// ### Convert keys to numeric values (used in matching)
 	function matchCamelot(inputKey, deckKey) {
 		// 0 : no match
-		// 1 : energy jump match
+		// 1 : two semitone energy jump match
 		// 2 : full match
-		
+		// 3 : energy swap match
+		// 4 : one semitone energy jump match
+
+		// Energy Swap
+		if (inputKey.charAt(2)=="A" && (parseInt(inputKey.substring(0,2)) + 3) % 12 == parseInt(deckKey.substring(0,2)) % 12 && deckKey.charAt(2)=="B")
+			return 3;
+		if (inputKey.charAt(2)=="B" && (parseInt(inputKey.substring(0,2)) + 9) % 12 == parseInt(deckKey.substring(0,2)) % 12 && deckKey.charAt(2)=="A")
+			return 3;
+
+		if (inputKey.charAt(2)==deckKey.charAt(2) && (((parseInt(inputKey.substring(0,2)) + 7) % 12 == parseInt(deckKey.substring(0,2)) % 12) || 
+													  ((parseInt(inputKey.substring(0,2)) + 5) % 12 == parseInt(deckKey.substring(0,2)) % 12)))
+			return 4;
+
 		// Minor Keys
 		if (convertCamelot(inputKey) == 1)
 		{	if (convertCamelot(deckKey) == 1 || convertCamelot(deckKey) == 2 || convertCamelot(deckKey) == 12 || convertCamelot(deckKey) == 21)	{	return 2;}	 
@@ -138,7 +150,7 @@ Item {
 			if (convertCamelot(deckKey) == 23 || convertCamelot(deckKey) == 31)	{	return 1;} 
 		}
 		if (convertCamelot(inputKey) == 22)
-		{	if (convertCamelot(deckKey) == 22 || convertCamelot(deckKey) == 3 || convertCamelot(deckKey) == 1  || convertCamelot(deckKey) == 2)	{	return 2;}	 
+		{	if (convertCamelot(deckKey) == 22 || convertCamelot(deckKey) == 23 || convertCamelot(deckKey) == 21  || convertCamelot(deckKey) == 2)	{	return 2;}	 
 			if (convertCamelot(deckKey) == 24 || convertCamelot(deckKey) == 12)	{	return 1;} 
 		}
 		if (convertCamelot(inputKey) > 22 && convertCamelot(inputKey) < 31)
@@ -160,7 +172,7 @@ Item {
 	// ### Defines Deck Keys Text color
 	function camelotTextColor(inputKey, deckKey) {
 		//	when matched or energy matched
-		if ((matchCamelot(inputKey, deckKey) == 2) || (matchCamelot(inputKey, deckKey) == 1)) {	return colors.rgba (255, 255, 255, 175); }
+		if ((matchCamelot(inputKey, deckKey) == 2) || (matchCamelot(inputKey, deckKey) == 1) || (matchCamelot(inputKey, deckKey) == 3) || (matchCamelot(inputKey, deckKey) == 4)) {	return colors.rgba (255, 255, 255, 175); }
 		
 		//	when not applicable
 		if (deckKey == "N.A.") { return colors.rgba (255, 255, 255, 16);}
@@ -174,8 +186,14 @@ Item {
 		//	when matched & not current browser deck
 		if ((matchCamelot(inputKey, deckKey) == 2) && (screenFocus != deckIndex)) {	return colors.rgba (0, 220, 0, 128); }
 
-		//	when energy matched & not current browser deck
+		//	when two semitone energy matched & not current browser deck
 		if ((matchCamelot(inputKey, deckKey) == 1) && (screenFocus != deckIndex)) {	return colors.rgba (255, 128, 0, 120); }
+
+		//	when energy swap matched & not current browser deck
+		if ((matchCamelot(inputKey, deckKey) == 3) && (screenFocus != deckIndex)) {	return colors.rgba (255, 0, 0, 120); }
+
+		//	when one semitone energy matched & not current browser deck
+		if ((matchCamelot(inputKey, deckKey) == 4) && (screenFocus != deckIndex)) {	return colors.rgba (255, 128, 0, 60); }
 		
 		//	when not matched
 		return colors.rgba (255, 255, 255, 16);
