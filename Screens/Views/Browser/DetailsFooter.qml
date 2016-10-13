@@ -76,34 +76,6 @@ Item {
 		return "N.A.";
 	}
 
-	// ### Convert keys to numeric values (used in matchCamelot function)
-	function convertCamelot(inputKey) {
-		if (inputKey == "01A") {	return  1; }
-		if (inputKey == "02A") {	return  2; }
-		if (inputKey == "03A") {	return  3; }
-		if (inputKey == "04A") {	return  4; }
-		if (inputKey == "05A") {	return  5; }
-		if (inputKey == "06A") {	return  6; }
-		if (inputKey == "07A") {	return  7; }
-		if (inputKey == "08A") {	return  8; }
-		if (inputKey == "09A") {	return  9; }
-		if (inputKey == "10A") {	return 10; }
-		if (inputKey == "11A") {	return 11; }
-		if (inputKey == "12A") {	return 12; }
-		if (inputKey == "01B") {	return 21; }
-		if (inputKey == "02B") {	return 22; }
-		if (inputKey == "03B") {	return 23; }
-		if (inputKey == "04B") {	return 24; }
-		if (inputKey == "05B") {	return 25; }
-		if (inputKey == "06B") {	return 26; }
-		if (inputKey == "07B") {	return 27; }
-		if (inputKey == "08B") {	return 28; }
-		if (inputKey == "09B") {	return 29; }
-		if (inputKey == "10B") {	return 30; }
-		if (inputKey == "11B") {	return 31; }
-		if (inputKey == "12B") {	return 32; }
-	}
-
 	// ### Convert keys to numeric values (used in matching)
 	function matchCamelot(inputKey, deckKey) {
 		// 0 : no match
@@ -112,61 +84,40 @@ Item {
 		// 3 : energy swap match
 		// 4 : one semitone energy jump match
 
+		if (inputKey == "N.A." || deckKey == "N.A.")
+			return 0;
+
+		var inputVal = parseInt(inputKey.substring(0,2));
+		var deckVal = parseInt(deckKey.substring(0,2));
+		var inputScale = inputKey.charAt(2);
+		var deckScale = deckKey.charAt(2);
+
 		// Energy Swap
-		if (inputKey.charAt(2)=="A" && (parseInt(inputKey.substring(0,2)) + 3) % 12 == parseInt(deckKey.substring(0,2)) % 12 && deckKey.charAt(2)=="B")
-			return 3;
-		if (inputKey.charAt(2)=="B" && (parseInt(inputKey.substring(0,2)) + 9) % 12 == parseInt(deckKey.substring(0,2)) % 12 && deckKey.charAt(2)=="A")
-			return 3;
+		if (inputScale == "A" && deckScale=="B" && (inputVal + 3) % 12 == deckVal % 12)
+			return 3; //minor to major, plus 3
 
-		if (inputKey.charAt(2)==deckKey.charAt(2) && (((parseInt(inputKey.substring(0,2)) + 7) % 12 == parseInt(deckKey.substring(0,2)) % 12) || 
-													  ((parseInt(inputKey.substring(0,2)) + 5) % 12 == parseInt(deckKey.substring(0,2)) % 12)))
-			return 4;
+		if (inputScale == "B" && deckScale=="A" && (inputVal + 9) % 12 == deckVal % 12)
+			return 3; //major to minor, minus 3
 
-		// Minor Keys
-		if (convertCamelot(inputKey) == 1)
-		{	if (convertCamelot(deckKey) == 1 || convertCamelot(deckKey) == 2 || convertCamelot(deckKey) == 12 || convertCamelot(deckKey) == 21)	{	return 2;}	 
-			if (convertCamelot(deckKey) == 3 || convertCamelot(deckKey) == 11)	{	return 1;} 
-		}
-		if (convertCamelot(inputKey) == 2)
-		{	if (convertCamelot(deckKey) == 2 || convertCamelot(deckKey) == 3 || convertCamelot(deckKey) == 1  || convertCamelot(deckKey) == 22)	{	return 2;}	 
-			if (convertCamelot(deckKey) == 4 || convertCamelot(deckKey) == 12)	{	return 1;} 
-		}
-		if (convertCamelot(inputKey) > 2 && convertCamelot(inputKey) < 11)
-		{	if (convertCamelot(deckKey) == convertCamelot(inputKey) || convertCamelot(deckKey) == convertCamelot(inputKey)+1 || convertCamelot(deckKey) == convertCamelot(inputKey)-1  || convertCamelot(deckKey) == convertCamelot(inputKey)+20)	{	return 2;}	 
-			if (convertCamelot(deckKey) == convertCamelot(inputKey)+2 || convertCamelot(deckKey) == convertCamelot(inputKey)-2)	{	return 1;} 
-		}
-		if (convertCamelot(inputKey) == 11)
-		{	if (convertCamelot(deckKey) == 11 || convertCamelot(deckKey) == 12 || convertCamelot(deckKey) == 10  || convertCamelot(deckKey) == 31)	{	return 2;}	 
-			if (convertCamelot(deckKey) == 1 || convertCamelot(deckKey) == 9)	{	return 1;} 
-		}
-		if (convertCamelot(inputKey) == 12)
-		{	if (convertCamelot(deckKey) == 12 || convertCamelot(deckKey) == 1 || convertCamelot(deckKey) == 11  || convertCamelot(deckKey) == 32)	{	return 2;}	 
-			if (convertCamelot(deckKey) == 2 || convertCamelot(deckKey) == 10)	{	return 1;} 
-		}
+		// One semitone energy jump
+		if (inputScale == deckScale && ((inputVal + 7) % 12 == deckVal % 12 || 
+										(inputVal + 5) % 12 == deckVal % 12))
+			return 4; //plus or minus 7, same scale
+
+		// Two semitone energy jump
+		if (inputScale == deckScale && ((inputVal + 2) % 12 == deckVal % 12 || 
+										(inputVal + 10) % 12 == deckVal % 12))
+			return 2; //plus or minus 2, same scale
+
+		// Full match
+		if (inputScale == deckScale && ((inputVal + 1) % 12 == deckVal % 12 || 
+										(inputVal + 11) % 12 == deckVal % 12))
+			return 1; //plus or minus 1, same scale
+
+		if (inputVal == deckVal)
+			return 1; //same key, scale irrelevant
 	
-		// Major Keys
-		if (convertCamelot(inputKey) == 21)
-		{	if (convertCamelot(deckKey) == 21 || convertCamelot(deckKey) == 22 || convertCamelot(deckKey) == 32 || convertCamelot(deckKey) == 1)	{	return 2;}	 
-			if (convertCamelot(deckKey) == 23 || convertCamelot(deckKey) == 31)	{	return 1;} 
-		}
-		if (convertCamelot(inputKey) == 22)
-		{	if (convertCamelot(deckKey) == 22 || convertCamelot(deckKey) == 23 || convertCamelot(deckKey) == 21  || convertCamelot(deckKey) == 2)	{	return 2;}	 
-			if (convertCamelot(deckKey) == 24 || convertCamelot(deckKey) == 12)	{	return 1;} 
-		}
-		if (convertCamelot(inputKey) > 22 && convertCamelot(inputKey) < 31)
-		{	if (convertCamelot(deckKey) == convertCamelot(inputKey) || convertCamelot(deckKey) == convertCamelot(inputKey)+1 || convertCamelot(deckKey) == convertCamelot(inputKey)-1  || convertCamelot(deckKey) == convertCamelot(inputKey)-20)	{	return 2;}	 
-			if (convertCamelot(deckKey) == convertCamelot(inputKey)+2 || convertCamelot(deckKey) == convertCamelot(inputKey)-2)	{	return 1;} 
-		}
-		if (convertCamelot(inputKey) == 31)
-		{	if (convertCamelot(deckKey) == 31 || convertCamelot(deckKey) == 32 || convertCamelot(deckKey) == 30  || convertCamelot(deckKey) == 11)	{	return 2;}	 
-			if (convertCamelot(deckKey) == 21 || convertCamelot(deckKey) == 29)	{	return 1;}	
-		}
-		if (convertCamelot(inputKey) == 32)
-		{	if (convertCamelot(deckKey) == 32 || convertCamelot(deckKey) == 21 || convertCamelot(deckKey) == 31  || convertCamelot(deckKey) == 12)	{	return 2;}	 
-			if (convertCamelot(deckKey) == 22 || convertCamelot(deckKey) == 30)	{	return 1;}	
-		}
-	
-		return 0;
+		return 0; //no match
 	}
 
 	// ### Defines Deck Keys Text color
