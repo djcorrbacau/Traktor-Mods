@@ -107,15 +107,15 @@ Item {
 		// Two semitone energy jump
 		if (inputScale == deckScale && ((inputVal + 2) % 12 == deckVal % 12 || 
 										(inputVal + 10) % 12 == deckVal % 12))
-			return 2; //plus or minus 2, same scale
+			return 1; //plus or minus 2, same scale
 
 		// Full match
 		if (inputScale == deckScale && ((inputVal + 1) % 12 == deckVal % 12 || 
 										(inputVal + 11) % 12 == deckVal % 12))
-			return 1; //plus or minus 1, same scale
+			return 2; //plus or minus 1, same scale
 
 		if (inputVal == deckVal)
-			return 1; //same key, scale irrelevant
+			return 2; //same key, scale irrelevant
 	
 		return 0; //no match
 	}
