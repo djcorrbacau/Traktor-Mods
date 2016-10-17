@@ -43,7 +43,8 @@ Item {
 	AppProperty { id: headerPropertyLoopActive;   path: "app.traktor.decks." + (deck_Id+1) + ".loop.active"; }
 	AppProperty { id: headerPropertyLoopSize;     path: "app.traktor.decks." + (deck_Id+1) + ".loop.size"; }
 
-  AppProperty { id: propComment;        path: "app.traktor.decks." + (deckId+1) + ".content.comment" }
+  AppProperty { id: propComment;        path: "app.traktor.decks." + (deck_Id+1) + ".content.comment" }
+  AppProperty { id: propMixerTotalGain;     path: "app.traktor.decks." + (deck_Id+1) + ".content.total_gain" }
 
 	readonly property int speed: 40  // Transition speed
 
@@ -541,9 +542,9 @@ Item {
 		}
 	}
 
-	// ###################
-  // ### ADD COMMENT ### - OK
-  // ###################
+	// ##########################
+  // ### ADD COMMENT OR KEY ### - OK
+  // ##########################
 
   Rectangle {
       id:           syncstatus_backgnd
@@ -592,7 +593,7 @@ Item {
       anchors.horizontalCenter:   parent.horizontalCenter
       anchors.top:        parent.top
       anchors.topMargin:    marginCalc(propComment.value)
-      text: trimmer(propComment.value)
+      text: propComment.value.length==0?convertToCamelot(propLegacyKey.value):trimmer(propComment.value)
       visible:        isLoaded
     }
   }
@@ -968,11 +969,11 @@ Item {
 	}
 
 
-	// ###################################################
-	// ### ORIGINAL TRACK MUSICAL KEY (BOTTOM - RIGHT) ###
-	// ###################################################
+	// ############
+	// ### Gain ###
+	// ############
 
-	// Displays the Musical Key for the current track. (CAMELOT FORMAT)
+	// Displays the gain for the current track.
 	
 	Rectangle {
     	id:						musickey_backgnd
@@ -988,11 +989,11 @@ Item {
 
 		Text {
 			id: 					musickey_text
-			text: 					convertToCamelot(propMusicalKey.value)
+			text: 					(20*(Math.log(propMixerTotalGain.value)/Math.LN10)).toFixed(1);
 			color:     				headerState == "small" ? colors.rgba (255, 255, 255, 48) : colors.rgba (255, 255, 255, 232)
-			font.pixelSize:     	fonts.scale(14)
+			font.pixelSize:     	fonts.scale(12)
 			anchors.top:       		parent.top
-			anchors.topMargin:  	-2
+			anchors.topMargin:  	-1
 			anchors.horizontalCenter: musickey_backgnd.horizontalCenter
 			visible:				isLoaded
 		}
