@@ -587,13 +587,14 @@ Item {
         else
           return comment;
       }
+      property bool forceKey: false
       id:           syncstatus_text
       color:            headerState == "small" ? colors.rgba (255, 255, 255, 48) : colors.rgba (255, 255, 255, 232)
-      font.pixelSize:       fonts.scale(sizeCalc(propComment.value))
+      font.pixelSize:       forceKey?fonts.scale(14):fonts.scale(sizeCalc(propComment.value))
       anchors.horizontalCenter:   parent.horizontalCenter
       anchors.top:        parent.top
-      anchors.topMargin:    marginCalc(propComment.value)
-      text: propComment.value.length==0?convertToCamelot(propLegacyKey.value):trimmer(propComment.value)
+      anchors.topMargin:    forceKey?-2:marginCalc(propComment.value)
+      text: forceKey||propComment.value.length==0?convertToCamelot(propLegacyKey.value):trimmer(propComment.value)
       visible:        isLoaded
     }
   }

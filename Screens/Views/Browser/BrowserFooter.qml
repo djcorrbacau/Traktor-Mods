@@ -46,8 +46,8 @@ Rectangle {
 	AppProperty { id: propTrackLength_CD; path: "app.traktor.decks." + (deckCode+3) + ".track.content.track_length"; }
 	readonly property double cuePos_AB: (propNextCuePoint_AB.value >= 0) ? propNextCuePoint_AB.value : propTrackLength_AB.value*1000
 	readonly property double cuePos_CD: (propNextCuePoint_CD.value >= 0) ? propNextCuePoint_CD.value : propTrackLength_CD.value*1000
-	readonly property int phraseLength: 4
-	readonly property int beatLength: 4
+	readonly property int phraseLength: 4 //bars in a phrase
+	readonly property int beatLength: 4 //beats in a bar
 	readonly property int yellowPhraseWarning: 12 //threshold for yellow beats to cue warning
 	readonly property int redPhraseWarning: 8 //threshold for red beats to cue warning
 
